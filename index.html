@@ -375,15 +375,15 @@
             document.getElementById('movie-iframe').style.display = 'none';
             document.getElementById('movie-iframe').src = ""; 
             
-            // Update button text based on Movie or Series
+            // DYNAMIC BUTTON NAMES
             if (activeMediaType === "series") {
-                document.getElementById('server1-btn').innerText = "TV Server 1 (Vidsrc)";
-                document.getElementById('server2-btn').innerText = "TV Server 2 (Vidsrc.in)";
-                document.getElementById('server3-btn').innerText = "TV Server 3 (VidLink)";
-                document.getElementById('server4-btn').innerText = "TV Server 4 (AutoEmbed)";
+                document.getElementById('server1-btn').innerText = "TV Server 1 (VidLink)";
+                document.getElementById('server2-btn').innerText = "TV Server 2 (Vidsrc.cc)";
+                document.getElementById('server3-btn').innerText = "TV Server 3 (MultiEmbed)";
+                document.getElementById('server4-btn').innerText = "TV Server 4 (Vidsrc.pm)";
             } else {
-                document.getElementById('server1-btn').innerText = "Server 1 (Vidsrc)";
-                document.getElementById('server2-btn').innerText = "Server 2 (Vidsrc.in)";
+                document.getElementById('server1-btn').innerText = "Server 1 (Vidsrc 1)";
+                document.getElementById('server2-btn').innerText = "Server 2 (Vidsrc 2)";
                 document.getElementById('server3-btn').innerText = "Server 3 (VidLink)";
                 document.getElementById('server4-btn').innerText = "Server 4 (MultiEmbed)";
             }
@@ -397,12 +397,12 @@
             const iframe = document.getElementById('movie-iframe');
             iframe.style.display = 'block';
 
-            // DEDICATED TV SERIES SERVERS
+            // DEDICATED TV SERIES SERVERS (Fresh, unblocked mirrors specifically for episodes)
             if (activeMediaType === "series") {
-                if(serverNum === 1) iframe.src = `https://vidsrc.net/embed/tv?imdb=${activeMovieId}`; // Shows UI selector
-                if(serverNum === 2) iframe.src = `https://vidsrc.in/embed/tv?imdb=${activeMovieId}`; // Shows UI selector
-                if(serverNum === 3) iframe.src = `https://vidlink.pro/tv/${activeMovieId}/1/1`; // Defaults to S1 E1
-                if(serverNum === 4) iframe.src = `https://autoembed.co/tv/imdb/${activeMovieId}-1-1`; // Defaults to S1 E1
+                if(serverNum === 1) iframe.src = `https://vidlink.pro/tv/${activeMovieId}/1/1`; // Auto-plays S1E1 with menu
+                if(serverNum === 2) iframe.src = `https://vidsrc.cc/v2/embed/tv/${activeMovieId}/1/1`; // Alternative mirror
+                if(serverNum === 3) iframe.src = `https://multiembed.mov/?video_id=${activeMovieId}&tmdb=0&s=1&e=1`; // Aggregator
+                if(serverNum === 4) iframe.src = `https://vidsrc.pm/embed/tv?imdb=${activeMovieId}`; // Newest Vidsrc mirror
             } 
             // DEDICATED MOVIE SERVERS
             else {
