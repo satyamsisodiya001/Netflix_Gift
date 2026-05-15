@@ -159,6 +159,10 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" style="filter: hue-rotate(200deg);" alt="Satyam">
                 <span>Satyam</span>
             </div>
+            <div class="profile" onclick="enterNetflix()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" style="filter: grayscale(100%);" alt="Guest">
+                <span>Guest</span>
+            </div>
         </div>
     </div>
 
@@ -233,7 +237,10 @@
             <button class="server-btn" id="server4-btn" onclick="loadServer(4)">Server 4</button>
         </div>
 
-        <h2 id="server-prompt-text">Click a server on the top left to start playing ⬆️<br><span style="font-size: 1rem; color: gray;">(If one server doesn't load, try the next one)</span></h2>
+        <h2 id="server-prompt-text">Click a server on the top left to start playing ⬆️<br>
+            <span style="font-size: 1rem; color: gray;">(If one server doesn't load, try the next one)</span><br>
+            <span style="font-size: 1rem; color: #E50914; font-weight: bold;">Tip: For movies choose server 3, for web series choose server 4</span>
+        </h2>
 
         <button class="close-popup-btn" onclick="closeMoviePopup()">✖</button>
         
@@ -375,7 +382,6 @@
             document.getElementById('movie-iframe').style.display = 'none';
             document.getElementById('movie-iframe').src = ""; 
             
-            // DYNAMIC BUTTON NAMES
             if (activeMediaType === "series") {
                 document.getElementById('server1-btn').innerText = "TV Server 1 (VidLink)";
                 document.getElementById('server2-btn').innerText = "TV Server 2 (Vidsrc.cc)";
@@ -393,19 +399,19 @@
         }
 
         function loadServer(serverNum) {
+            // Hides the prompt text and the server buttons when a server is selected
             document.getElementById('server-prompt-text').style.display = 'none';
+            document.getElementById('server-selector-ui').style.display = 'none';
+            
             const iframe = document.getElementById('movie-iframe');
             iframe.style.display = 'block';
 
-            // DEDICATED TV SERIES SERVERS (Fresh, unblocked mirrors specifically for episodes)
             if (activeMediaType === "series") {
-                if(serverNum === 1) iframe.src = `https://vidlink.pro/tv/${activeMovieId}/1/1`; // Auto-plays S1E1 with menu
-                if(serverNum === 2) iframe.src = `https://vidsrc.cc/v2/embed/tv/${activeMovieId}/1/1`; // Alternative mirror
-                if(serverNum === 3) iframe.src = `https://multiembed.mov/?video_id=${activeMovieId}&tmdb=0&s=1&e=1`; // Aggregator
-                if(serverNum === 4) iframe.src = `https://vidsrc.pm/embed/tv?imdb=${activeMovieId}`; // Newest Vidsrc mirror
-            } 
-            // DEDICATED MOVIE SERVERS
-            else {
+                if(serverNum === 1) iframe.src = `https://vidlink.pro/tv/${activeMovieId}/1/1`; 
+                if(serverNum === 2) iframe.src = `https://vidsrc.cc/v2/embed/tv/${activeMovieId}/1/1`; 
+                if(serverNum === 3) iframe.src = `https://multiembed.mov/?video_id=${activeMovieId}&tmdb=0&s=1&e=1`; 
+                if(serverNum === 4) iframe.src = `https://vidsrc.pm/embed/tv?imdb=${activeMovieId}`; 
+            } else {
                 if(serverNum === 1) iframe.src = `https://vidsrc.me/embed/movie?imdb=${activeMovieId}`;
                 if(serverNum === 2) iframe.src = `https://vidsrc.in/embed/movie?imdb=${activeMovieId}`;
                 if(serverNum === 3) iframe.src = `https://vidlink.pro/movie/${activeMovieId}`;
