@@ -105,6 +105,21 @@
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: black; z-index: 999999;
         }
+        
+        /* NEW SERVER SELECTOR UI */
+        #server-selector-ui {
+            position: absolute; top: 20px; left: 40px; z-index: 1000; display: none; gap: 10px;
+        }
+        .server-btn {
+            background-color: rgba(30, 30, 30, 0.8); color: white; border: 1px solid grey;
+            padding: 8px 15px; font-size: 1rem; border-radius: 4px; cursor: pointer; transition: 0.2s;
+        }
+        .server-btn:hover { background-color: var(--netflix-red); border-color: var(--netflix-red); }
+        #server-prompt-text {
+            color: white; font-size: 1.5rem; position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); z-index: 900; display: none;
+        }
+
         .close-popup-btn {
             position: absolute; top: 20px; right: 30px; z-index: 1000; font-size: 30px; color: white;
             background: rgba(0,0,0,0.5); border: none; border-radius: 50%; width: 50px; height: 50px; 
@@ -113,8 +128,8 @@
         .close-popup-btn:hover { background: rgba(255,255,255,0.3); }
         
         /* Dual Players */
-        #movie-iframe { width: 100%; height: 100%; border: none; display: none; }
-        #local-video-player { width: 100%; height: 100%; object-fit: contain; display: none; background: black; }
+        #movie-iframe { width: 100%; height: 100%; border: none; display: none; position: relative; z-index: 500; }
+        #local-video-player { width: 100%; height: 100%; object-fit: contain; display: none; background: black; position: relative; z-index: 500; }
 
     </style>
 </head>
@@ -189,6 +204,16 @@
     </div>
 
     <div id="movie-popup-container">
+        
+        <div id="server-selector-ui">
+            <button class="server-btn" onclick="loadServer(1)">Server 1 (Vidsrc)</button>
+            <button class="server-btn" onclick="loadServer(2)">Server 2 (VidLink)</button>
+            <button class="server-btn" onclick="loadServer(3)">Server 3 (Multi)</button>
+            <button class="server-btn" onclick="loadServer(4)">Server 4 (Smashy)</button>
+        </div>
+
+        <h2 id="server-prompt-text">Please select a server from the top left ⬆️</h2>
+
         <button class="close-popup-btn" onclick="closeMoviePopup()">✖</button>
         
         <iframe id="movie-iframe" src="" allowfullscreen></iframe>
@@ -201,6 +226,7 @@
 
     <script>
         const OMDB_API_KEY = "add6120a"; 
+        let activeMovieId = ""; // Stores the IMDB ID for server switching
 
         function startExperience() {
             document.getElementById('start-screen').style.display = 'none';
@@ -232,7 +258,7 @@
             else nav.style.backgroundColor = 'transparent';
         });
 
-        // --- 1. HER PRIVATE VAULT (Restored to vidsrc.in) ---
+        // --- 1. DATA BUILDERS ---
         function loadHardcodedFavorites() {
             const favorites = [
                 { title: "The Notebook", imdbId: "tt0332280", poster: "https://upload.wikimedia.org/wikipedia/en/8/86/Posternotebook.jpg" },
@@ -246,43 +272,32 @@
                 const img = document.createElement('img');
                 img.className = 'row-poster';
                 img.src = movie.poster;
-                img.onclick = () => openIframeStream(`https://vidsrc.in/embed/movie/${movie.imdbId}`);
+                img.onclick = () => openMovieOptions(movie.imdbId);
                 container.appendChild(img);
             });
         }
 
-        // --- 2. AUTOMATED GLOBAL ROWS (Restored to vidsrc.in) ---
         function loadAutomatedRow(searchWord, containerId) {
             const url = `https://www.omdbapi.com/?s=${searchWord}&type=movie&apikey=${OMDB_API_KEY}`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById(containerId);
-                    if (data.Search) {
-                        data.Search.forEach(movie => {
-                            if (movie.Poster && movie.Poster !== "N/A") {
-                                const img = document.createElement('img');
-                                img.className = 'row-poster';
-                                img.src = movie.Poster;
-                                img.onclick = () => openIframeStream(`https://vidsrc.in/embed/movie/${movie.imdbID}`);
-                                container.appendChild(img);
-                            }
-                        });
-                    }
-                })
-                .catch(err => console.error("API Error:", err));
-        }
-
-        // --- 3. INFINITE SEARCH ENGINE (Restored to vidsrc.in) ---
-        function handleSearchEnter(event) {
-            if (event.key === "Enter") searchMovies();
+            fetch(url).then(res => res.json()).then(data => {
+                const container = document.getElementById(containerId);
+                if (data.Search) {
+                    data.Search.forEach(movie => {
+                        if (movie.Poster && movie.Poster !== "N/A") {
+                            const img = document.createElement('img');
+                            img.className = 'row-poster';
+                            img.src = movie.Poster;
+                            img.onclick = () => openMovieOptions(movie.imdbID);
+                            container.appendChild(img);
+                        }
+                    });
+                }
+            });
         }
 
         function searchMovies() {
             const query = document.getElementById('searchInput').value;
             if (!query) return;
-
             document.getElementById('home-view').style.display = 'none';
             document.getElementById('search-view').style.display = 'block';
             window.scrollTo(0, 0);
@@ -290,32 +305,26 @@
             const container = document.getElementById('search-results-container');
             container.innerHTML = '<p style="color:white; margin-left:20px;">Searching global database...</p>';
 
-            const url = `https://www.omdbapi.com/?s=${encodeURIComponent(query)}&type=movie&apikey=${OMDB_API_KEY}`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
+            fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(query)}&type=movie&apikey=${OMDB_API_KEY}`)
+                .then(res => res.json()).then(data => {
                     container.innerHTML = ''; 
-                    
                     if (data.Response === "True") {
                         data.Search.forEach(movie => {
                             if (movie.Poster && movie.Poster !== "N/A") {
                                 const img = document.createElement('img');
                                 img.className = 'row-poster';
                                 img.src = movie.Poster;
-                                img.onclick = () => openIframeStream(`https://vidsrc.in/embed/movie/${movie.imdbID}`);
+                                img.onclick = () => openMovieOptions(movie.imdbID);
                                 container.appendChild(img);
                             }
                         });
                     } else {
-                        container.innerHTML = `<p style="color:white; margin-left:20px;">No movies found for "${query}". Try another title!</p>`;
+                        container.innerHTML = `<p style="color:white; margin-left:20px;">No movies found.</p>`;
                     }
-                })
-                .catch(err => {
-                    container.innerHTML = `<p style="color:white; margin-left:20px;">Search unavailable. Please check your connection.</p>`;
                 });
         }
 
+        function handleSearchEnter(event) { if (event.key === "Enter") searchMovies(); }
         function resetHome() {
             document.getElementById('searchInput').value = '';
             document.getElementById('search-view').style.display = 'none';
@@ -323,44 +332,54 @@
             window.scrollTo(0,0);
         }
 
-        // --- 4. VIDEO PLAYBACK ROUTING ---
+        // --- 2. MULTI-SERVER VIDEO LOGIC ---
 
         function playOurStory() {
-            const popupContainer = document.getElementById('movie-popup-container');
-            const iframePlayer = document.getElementById('movie-iframe');
+            document.getElementById('movie-popup-container').style.display = 'block';
+            document.getElementById('movie-iframe').style.display = 'none';
+            document.getElementById('server-selector-ui').style.display = 'none';
+            document.getElementById('server-prompt-text').style.display = 'none';
+            
             const localPlayer = document.getElementById('local-video-player');
-            
-            iframePlayer.style.display = 'none';
-            iframePlayer.src = ""; 
-            
             localPlayer.style.display = 'block';
-            popupContainer.style.display = 'block';
-            
             localPlayer.play();
         }
 
-        function openIframeStream(movieLink) {
-            const popupContainer = document.getElementById('movie-popup-container');
-            const iframePlayer = document.getElementById('movie-iframe');
-            const localPlayer = document.getElementById('local-video-player');
+        function openMovieOptions(imdbId) {
+            activeMovieId = imdbId; // Save the ID for the buttons to use
             
-            localPlayer.style.display = 'none';
-            localPlayer.pause(); 
+            document.getElementById('movie-popup-container').style.display = 'block';
+            document.getElementById('local-video-player').style.display = 'none';
+            document.getElementById('local-video-player').pause();
             
-            iframePlayer.style.display = 'block';
-            iframePlayer.src = movieLink;
-            popupContainer.style.display = 'block';
+            document.getElementById('movie-iframe').style.display = 'none';
+            document.getElementById('movie-iframe').src = ""; 
+            
+            // Show the server selector and the prompt text
+            document.getElementById('server-selector-ui').style.display = 'flex';
+            document.getElementById('server-prompt-text').style.display = 'block';
+        }
+
+        function loadServer(serverNum) {
+            document.getElementById('server-prompt-text').style.display = 'none';
+            const iframe = document.getElementById('movie-iframe');
+            iframe.style.display = 'block';
+
+            // 4 Completely different piracy architectures to bypass ISP Blocks
+            if(serverNum === 1) iframe.src = `https://vidsrc.me/embed/movie?imdb=${activeMovieId}`; // The original API you liked
+            if(serverNum === 2) iframe.src = `https://vidlink.pro/movie/${activeMovieId}`; // New, very stable API
+            if(serverNum === 3) iframe.src = `https://multiembed.mov/?video_id=${activeMovieId}&tmdb=0`; // Aggregator API
+            if(serverNum === 4) iframe.src = `https://embed.smashystream.com/playere.php?imdb=${activeMovieId}`; // Backup API
         }
 
         function closeMoviePopup() {
-            const popupContainer = document.getElementById('movie-popup-container');
-            const iframePlayer = document.getElementById('movie-iframe');
-            const localPlayer = document.getElementById('local-video-player');
+            document.getElementById('movie-popup-container').style.display = 'none';
+            document.getElementById('movie-iframe').src = ""; 
+            document.getElementById('local-video-player').pause();
             
-            iframePlayer.src = ""; 
-            localPlayer.pause();
-            
-            popupContainer.style.display = 'none';
+            // Reset UI for next time
+            document.getElementById('server-selector-ui').style.display = 'none';
+            document.getElementById('server-prompt-text').style.display = 'none';
         }
     </script>
 </body>
