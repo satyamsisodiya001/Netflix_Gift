@@ -63,7 +63,7 @@
         
         /* SEARCH BAR */
         .search-container { display: flex; align-items: center; background: rgba(0,0,0,0.7); border: 1px solid white; padding: 5px 10px; border-radius: 4px; }
-        .search-container input { background: transparent; border: none; color: white; outline: none; font-size: 1rem; padding: 5px; width: 220px; }
+        .search-container input { background: transparent; border: none; color: white; outline: none; font-size: 1rem; padding: 5px; width: 260px; }
         .search-container button { background: transparent; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
 
         /* HERO BANNER */
@@ -77,7 +77,7 @@
             background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%),
                         linear-gradient(to top, var(--netflix-black) 0%, rgba(0,0,0,0) 20%);
         }
-        .hero-content { position: absolute; bottom: 25%; left: 40px; width: 40%; }
+        .hero-content { position: absolute; bottom: 20%; left: 40px; width: 40%; }
         .hero-title { font-size: 4rem; font-weight: bold; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
         .hero-description { font-size: 1.2rem; margin-bottom: 25px; line-height: 1.5; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
@@ -88,10 +88,18 @@
         }
         .play-btn:hover { background-color: rgba(255,255,255,0.7); transform: scale(1.05); }
 
+        /* PLATFORM LOGOS */
+        .platform-logos {
+            display: flex; justify-content: center; align-items: center; gap: 5vw; 
+            padding: 20px 0 40px 0; background: linear-gradient(to top, rgba(0,0,0,0), var(--netflix-black));
+        }
+        .platform-logo { height: 40px; cursor: pointer; opacity: 0.6; transition: 0.3s; filter: drop-shadow(0px 0px 5px rgba(255,255,255,0.2)); }
+        .platform-logo:hover { opacity: 1; transform: scale(1.1); filter: drop-shadow(0px 0px 10px rgba(255,255,255,0.5)); }
+
         /* ROWS STYLING */
-        .content-container { margin-top: -20px; position: relative; z-index: 10; }
-        .row { margin-left: 40px; margin-bottom: 40px; }
-        .row h2 { font-size: 1.4vw; margin-bottom: 15px; font-weight: 500; text-transform: capitalize; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .content-container { position: relative; z-index: 10; padding-bottom: 50px; }
+        .row { margin-left: 40px; margin-bottom: 40px; scroll-margin-top: 100px; }
+        .row h2 { font-size: 1.4vw; margin-bottom: 15px; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         
         .row-posters { display: flex; overflow-y: hidden; overflow-x: scroll; padding: 10px 0 20px 0; gap: 12px; }
         .row-posters::-webkit-scrollbar { display: none; }
@@ -106,7 +114,6 @@
             background-color: black; z-index: 999999;
         }
         
-        /* NEW SERVER SELECTOR UI */
         #server-selector-ui {
             position: absolute; top: 20px; left: 40px; z-index: 1000; display: none; gap: 10px;
         }
@@ -115,9 +122,10 @@
             padding: 8px 15px; font-size: 1rem; border-radius: 4px; cursor: pointer; transition: 0.2s;
         }
         .server-btn:hover { background-color: var(--netflix-red); border-color: var(--netflix-red); }
+        
         #server-prompt-text {
             color: white; font-size: 1.5rem; position: absolute; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); z-index: 900; display: none;
+            transform: translate(-50%, -50%); z-index: 900; display: none; text-align: center;
         }
 
         .close-popup-btn {
@@ -127,7 +135,6 @@
         }
         .close-popup-btn:hover { background: rgba(255,255,255,0.3); }
         
-        /* Dual Players */
         #movie-iframe { width: 100%; height: 100%; border: none; display: none; position: relative; z-index: 500; }
         #local-video-player { width: 100%; height: 100%; object-fit: contain; display: none; background: black; position: relative; z-index: 500; }
 
@@ -161,7 +168,7 @@
                 <div class="logo" onclick="resetHome()">NETFLIX</div>
             </div>
             <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search any movie..." onkeypress="handleSearchEnter(event)">
+                <input type="text" id="searchInput" placeholder="Search movies, shows, anything..." onkeypress="handleSearchEnter(event)">
                 <button onclick="searchMovies()">🔍</button>
             </div>
         </nav>
@@ -180,19 +187,33 @@
             </header>
 
             <div class="content-container">
+                
+                <div class="platform-logos">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" class="platform-logo" onclick="document.getElementById('netflix-row').scrollIntoView({behavior: 'smooth'})" alt="Netflix">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Disney%2B_Hotstar_logo.svg" class="platform-logo" style="height: 50px;" onclick="document.getElementById('hotstar-row').scrollIntoView({behavior: 'smooth'})" alt="Hotstar">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg" class="platform-logo" onclick="document.getElementById('prime-row').scrollIntoView({behavior: 'smooth'})" alt="Prime Video">
+                </div>
+
                 <div class="row">
                     <h2>Her Absolute Favorites</h2>
                     <div class="row-posters" id="favorites-row"></div>
                 </div>
 
-                <div class="row">
-                    <h2>Trending Romances (Global)</h2>
-                    <div class="row-posters" id="romance-row"></div>
+                <div class="row" id="netflix-row">
+                    <h2>Netflix Originals</h2>
+                    <div class="row-posters" id="netflix-content"></div>
                 </div>
-                <div class="row">
-                    <h2>Late Night Thrillers (Global)</h2>
-                    <div class="row-posters" id="thriller-row"></div>
+
+                <div class="row" id="hotstar-row">
+                    <h2>Disney+ Hotstar Exclusives</h2>
+                    <div class="row-posters" id="hotstar-content"></div>
                 </div>
+
+                <div class="row" id="prime-row">
+                    <h2>Amazon Prime Video Hits</h2>
+                    <div class="row-posters" id="prime-content"></div>
+                </div>
+
             </div>
         </div>
 
@@ -206,13 +227,13 @@
     <div id="movie-popup-container">
         
         <div id="server-selector-ui">
-            <button class="server-btn" onclick="loadServer(1)">Server 1 (Vidsrc)</button>
-            <button class="server-btn" onclick="loadServer(2)">Server 2 (VidLink)</button>
-            <button class="server-btn" onclick="loadServer(3)">Server 3 (Multi)</button>
-            <button class="server-btn" onclick="loadServer(4)">Server 4 (Smashy)</button>
+            <button class="server-btn" id="server1-btn" onclick="loadServer(1)">Server 1</button>
+            <button class="server-btn" id="server2-btn" onclick="loadServer(2)">Server 2</button>
+            <button class="server-btn" id="server3-btn" onclick="loadServer(3)">Server 3</button>
+            <button class="server-btn" id="server4-btn" onclick="loadServer(4)">Server 4</button>
         </div>
 
-        <h2 id="server-prompt-text">Please select a server from the top left ⬆️</h2>
+        <h2 id="server-prompt-text">Click a server on the top left to start playing ⬆️<br><span style="font-size: 1rem; color: gray;">(If one server doesn't load, try the next one)</span></h2>
 
         <button class="close-popup-btn" onclick="closeMoviePopup()">✖</button>
         
@@ -226,7 +247,8 @@
 
     <script>
         const OMDB_API_KEY = "add6120a"; 
-        let activeMovieId = ""; // Stores the IMDB ID for server switching
+        let activeMovieId = "";
+        let activeMediaType = "movie"; 
 
         function startExperience() {
             document.getElementById('start-screen').style.display = 'none';
@@ -248,8 +270,9 @@
             window.scrollTo(0, 0); 
             
             loadHardcodedFavorites();
-            loadAutomatedRow("Love", "romance-row");
-            loadAutomatedRow("Thriller", "thriller-row");
+            loadPlatformRow(["tt4574334", "tt6468322", "tt13443470", "tt5753856"], 'netflix-content', 'series'); 
+            loadPlatformRow(["tt11821622", "tt11905648", "tt15367698", "tt9680440"], 'hotstar-content', 'series'); 
+            loadPlatformRow(["tt1190634", "tt9419884", "tt10344044", "tt12003614"], 'prime-content', 'series'); 
         }
 
         window.addEventListener('scroll', () => {
@@ -258,13 +281,12 @@
             else nav.style.backgroundColor = 'transparent';
         });
 
-        // --- 1. DATA BUILDERS ---
         function loadHardcodedFavorites() {
             const favorites = [
-                { title: "The Notebook", imdbId: "tt0332280", poster: "https://upload.wikimedia.org/wikipedia/en/8/86/Posternotebook.jpg" },
-                { title: "La La Land", imdbId: "tt3783958", poster: "https://upload.wikimedia.org/wikipedia/en/a/ab/La_La_Land_%28film%29.png" },
-                { title: "Titanic", imdbId: "tt0120338", poster: "https://upload.wikimedia.org/wikipedia/en/1/18/Titanic_%281997_film%29_poster.png" },
-                { title: "Pride & Prejudice", imdbId: "tt0414387", poster: "https://upload.wikimedia.org/wikipedia/en/0/03/Prideandprejudiceposter.jpg" }
+                { title: "The Notebook", imdbId: "tt0332280", poster: "https://upload.wikimedia.org/wikipedia/en/8/86/Posternotebook.jpg", type: "movie" },
+                { title: "La La Land", imdbId: "tt3783958", poster: "https://upload.wikimedia.org/wikipedia/en/a/ab/La_La_Land_%28film%29.png", type: "movie" },
+                { title: "Titanic", imdbId: "tt0120338", poster: "https://upload.wikimedia.org/wikipedia/en/1/18/Titanic_%281997_film%29_poster.png", type: "movie" },
+                { title: "Pride & Prejudice", imdbId: "tt0414387", poster: "https://upload.wikimedia.org/wikipedia/en/0/03/Prideandprejudiceposter.jpg", type: "movie" }
             ];
 
             const container = document.getElementById('favorites-row');
@@ -272,26 +294,25 @@
                 const img = document.createElement('img');
                 img.className = 'row-poster';
                 img.src = movie.poster;
-                img.onclick = () => openMovieOptions(movie.imdbId);
+                img.onclick = () => openMovieOptions(movie.imdbId, movie.type);
                 container.appendChild(img);
             });
         }
 
-        function loadAutomatedRow(searchWord, containerId) {
-            const url = `https://www.omdbapi.com/?s=${searchWord}&type=movie&apikey=${OMDB_API_KEY}`;
-            fetch(url).then(res => res.json()).then(data => {
-                const container = document.getElementById(containerId);
-                if (data.Search) {
-                    data.Search.forEach(movie => {
-                        if (movie.Poster && movie.Poster !== "N/A") {
-                            const img = document.createElement('img');
-                            img.className = 'row-poster';
-                            img.src = movie.Poster;
-                            img.onclick = () => openMovieOptions(movie.imdbID);
-                            container.appendChild(img);
-                        }
-                    });
-                }
+        function loadPlatformRow(ids, containerId, explicitType) {
+            const container = document.getElementById(containerId);
+            ids.forEach(id => {
+                fetch(`https://www.omdbapi.com/?i=${id}&apikey=${OMDB_API_KEY}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.Poster && data.Poster !== "N/A") {
+                        const img = document.createElement('img');
+                        img.className = 'row-poster';
+                        img.src = data.Poster;
+                        img.onclick = () => openMovieOptions(data.imdbID, explicitType || data.Type); 
+                        container.appendChild(img);
+                    }
+                });
             });
         }
 
@@ -303,23 +324,23 @@
             window.scrollTo(0, 0);
             
             const container = document.getElementById('search-results-container');
-            container.innerHTML = '<p style="color:white; margin-left:20px;">Searching global database...</p>';
+            container.innerHTML = '<p style="color:white; margin-left:20px;">Searching global database for movies & shows...</p>';
 
-            fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(query)}&type=movie&apikey=${OMDB_API_KEY}`)
+            fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(query)}&apikey=${OMDB_API_KEY}`)
                 .then(res => res.json()).then(data => {
                     container.innerHTML = ''; 
                     if (data.Response === "True") {
-                        data.Search.forEach(movie => {
-                            if (movie.Poster && movie.Poster !== "N/A") {
+                        data.Search.forEach(item => {
+                            if (item.Poster && item.Poster !== "N/A") {
                                 const img = document.createElement('img');
                                 img.className = 'row-poster';
-                                img.src = movie.Poster;
-                                img.onclick = () => openMovieOptions(movie.imdbID);
+                                img.src = item.Poster;
+                                img.onclick = () => openMovieOptions(item.imdbID, item.Type);
                                 container.appendChild(img);
                             }
                         });
                     } else {
-                        container.innerHTML = `<p style="color:white; margin-left:20px;">No movies found.</p>`;
+                        container.innerHTML = `<p style="color:white; margin-left:20px;">No results found.</p>`;
                     }
                 });
         }
@@ -332,8 +353,6 @@
             window.scrollTo(0,0);
         }
 
-        // --- 2. MULTI-SERVER VIDEO LOGIC ---
-
         function playOurStory() {
             document.getElementById('movie-popup-container').style.display = 'block';
             document.getElementById('movie-iframe').style.display = 'none';
@@ -345,8 +364,9 @@
             localPlayer.play();
         }
 
-        function openMovieOptions(imdbId) {
-            activeMovieId = imdbId; // Save the ID for the buttons to use
+        function openMovieOptions(imdbId, mediaType) {
+            activeMovieId = imdbId;
+            activeMediaType = mediaType; 
             
             document.getElementById('movie-popup-container').style.display = 'block';
             document.getElementById('local-video-player').style.display = 'none';
@@ -355,7 +375,19 @@
             document.getElementById('movie-iframe').style.display = 'none';
             document.getElementById('movie-iframe').src = ""; 
             
-            // Show the server selector and the prompt text
+            // Update button text based on Movie or Series
+            if (activeMediaType === "series") {
+                document.getElementById('server1-btn').innerText = "TV Server 1 (Vidsrc)";
+                document.getElementById('server2-btn').innerText = "TV Server 2 (Vidsrc.in)";
+                document.getElementById('server3-btn').innerText = "TV Server 3 (VidLink)";
+                document.getElementById('server4-btn').innerText = "TV Server 4 (AutoEmbed)";
+            } else {
+                document.getElementById('server1-btn').innerText = "Server 1 (Vidsrc)";
+                document.getElementById('server2-btn').innerText = "Server 2 (Vidsrc.in)";
+                document.getElementById('server3-btn').innerText = "Server 3 (VidLink)";
+                document.getElementById('server4-btn').innerText = "Server 4 (MultiEmbed)";
+            }
+
             document.getElementById('server-selector-ui').style.display = 'flex';
             document.getElementById('server-prompt-text').style.display = 'block';
         }
@@ -365,11 +397,20 @@
             const iframe = document.getElementById('movie-iframe');
             iframe.style.display = 'block';
 
-            // 4 Completely different piracy architectures to bypass ISP Blocks
-            if(serverNum === 1) iframe.src = `https://vidsrc.me/embed/movie?imdb=${activeMovieId}`; // The original API you liked
-            if(serverNum === 2) iframe.src = `https://vidlink.pro/movie/${activeMovieId}`; // New, very stable API
-            if(serverNum === 3) iframe.src = `https://multiembed.mov/?video_id=${activeMovieId}&tmdb=0`; // Aggregator API
-            if(serverNum === 4) iframe.src = `https://embed.smashystream.com/playere.php?imdb=${activeMovieId}`; // Backup API
+            // DEDICATED TV SERIES SERVERS
+            if (activeMediaType === "series") {
+                if(serverNum === 1) iframe.src = `https://vidsrc.net/embed/tv?imdb=${activeMovieId}`; // Shows UI selector
+                if(serverNum === 2) iframe.src = `https://vidsrc.in/embed/tv?imdb=${activeMovieId}`; // Shows UI selector
+                if(serverNum === 3) iframe.src = `https://vidlink.pro/tv/${activeMovieId}/1/1`; // Defaults to S1 E1
+                if(serverNum === 4) iframe.src = `https://autoembed.co/tv/imdb/${activeMovieId}-1-1`; // Defaults to S1 E1
+            } 
+            // DEDICATED MOVIE SERVERS
+            else {
+                if(serverNum === 1) iframe.src = `https://vidsrc.me/embed/movie?imdb=${activeMovieId}`;
+                if(serverNum === 2) iframe.src = `https://vidsrc.in/embed/movie?imdb=${activeMovieId}`;
+                if(serverNum === 3) iframe.src = `https://vidlink.pro/movie/${activeMovieId}`;
+                if(serverNum === 4) iframe.src = `https://multiembed.mov/?video_id=${activeMovieId}&tmdb=0`;
+            }
         }
 
         function closeMoviePopup() {
@@ -377,7 +418,6 @@
             document.getElementById('movie-iframe').src = ""; 
             document.getElementById('local-video-player').pause();
             
-            // Reset UI for next time
             document.getElementById('server-selector-ui').style.display = 'none';
             document.getElementById('server-prompt-text').style.display = 'none';
         }
