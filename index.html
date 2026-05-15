@@ -66,7 +66,7 @@
         .search-container input { background: transparent; border: none; color: white; outline: none; font-size: 1rem; padding: 5px; width: 220px; }
         .search-container button { background: transparent; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
 
-        /* HERO BANNER - Using your exact file name */
+        /* HERO BANNER */
         .hero {
             height: 85vh; background-size: cover; background-position: center;
             background-image: url('our_story.jpg'); 
@@ -112,7 +112,7 @@
         }
         .close-popup-btn:hover { background: rgba(255,255,255,0.3); }
         
-        /* Dual Players: Iframe for Streaming Links, Video for Local MP4 */
+        /* Dual Players */
         #movie-iframe { width: 100%; height: 100%; border: none; display: none; }
         #local-video-player { width: 100%; height: 100%; object-fit: contain; display: none; background: black; }
 
@@ -202,7 +202,6 @@
     <script>
         const OMDB_API_KEY = "add6120a"; 
 
-        // --- INTRO & NAVIGATION LOGIC ---
         function startExperience() {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('intro-screen').style.display = 'block';
@@ -222,7 +221,6 @@
             document.getElementById('main-screen').style.display = 'block';
             window.scrollTo(0, 0); 
             
-            // Trigger Data Loads
             loadHardcodedFavorites();
             loadAutomatedRow("Love", "romance-row");
             loadAutomatedRow("Thriller", "thriller-row");
@@ -234,7 +232,7 @@
             else nav.style.backgroundColor = 'transparent';
         });
 
-        // --- 1. HER PRIVATE VAULT (NEW AUTOEMBED LINKS) ---
+        // --- 1. HER PRIVATE VAULT (Restored to vidsrc.in) ---
         function loadHardcodedFavorites() {
             const favorites = [
                 { title: "The Notebook", imdbId: "tt0332280", poster: "https://upload.wikimedia.org/wikipedia/en/8/86/Posternotebook.jpg" },
@@ -248,13 +246,12 @@
                 const img = document.createElement('img');
                 img.className = 'row-poster';
                 img.src = movie.poster;
-                // Swapped to AutoEmbed to bypass Indian ISP Blocks
-                img.onclick = () => openIframeStream(`https://autoembed.co/movie/imdb/${movie.imdbId}`);
+                img.onclick = () => openIframeStream(`https://vidsrc.in/embed/movie/${movie.imdbId}`);
                 container.appendChild(img);
             });
         }
 
-        // --- 2. AUTOMATED GLOBAL ROWS (OMDb API + AUTOEMBED) ---
+        // --- 2. AUTOMATED GLOBAL ROWS (Restored to vidsrc.in) ---
         function loadAutomatedRow(searchWord, containerId) {
             const url = `https://www.omdbapi.com/?s=${searchWord}&type=movie&apikey=${OMDB_API_KEY}`;
 
@@ -268,8 +265,7 @@
                                 const img = document.createElement('img');
                                 img.className = 'row-poster';
                                 img.src = movie.Poster;
-                                // Swapped to AutoEmbed
-                                img.onclick = () => openIframeStream(`https://autoembed.co/movie/imdb/${movie.imdbID}`);
+                                img.onclick = () => openIframeStream(`https://vidsrc.in/embed/movie/${movie.imdbID}`);
                                 container.appendChild(img);
                             }
                         });
@@ -278,7 +274,7 @@
                 .catch(err => console.error("API Error:", err));
         }
 
-        // --- 3. INFINITE SEARCH ENGINE ---
+        // --- 3. INFINITE SEARCH ENGINE (Restored to vidsrc.in) ---
         function handleSearchEnter(event) {
             if (event.key === "Enter") searchMovies();
         }
@@ -307,8 +303,7 @@
                                 const img = document.createElement('img');
                                 img.className = 'row-poster';
                                 img.src = movie.Poster;
-                                // Swapped to AutoEmbed
-                                img.onclick = () => openIframeStream(`https://autoembed.co/movie/imdb/${movie.imdbID}`);
+                                img.onclick = () => openIframeStream(`https://vidsrc.in/embed/movie/${movie.imdbID}`);
                                 container.appendChild(img);
                             }
                         });
@@ -330,7 +325,6 @@
 
         // --- 4. VIDEO PLAYBACK ROUTING ---
 
-        // Plays your localized personal video edit: our_story.mp4
         function playOurStory() {
             const popupContainer = document.getElementById('movie-popup-container');
             const iframePlayer = document.getElementById('movie-iframe');
@@ -345,7 +339,6 @@
             localPlayer.play();
         }
 
-        // Plays infinite movie piracy streams: AutoEmbed
         function openIframeStream(movieLink) {
             const popupContainer = document.getElementById('movie-popup-container');
             const iframePlayer = document.getElementById('movie-iframe');
@@ -359,7 +352,6 @@
             popupContainer.style.display = 'block';
         }
 
-        // Closes the popup and stops both players
         function closeMoviePopup() {
             const popupContainer = document.getElementById('movie-popup-container');
             const iframePlayer = document.getElementById('movie-iframe');
